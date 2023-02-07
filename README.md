@@ -54,7 +54,7 @@ Finalmente ejecutar `python app.py`
 <body>
 
     <div class="container center text-center">
-        <h1>Departamentos y Empleados</h1>
+        <h1>Gráfico de barras de Departamentos y Empleados</h1>
         <img src="data:image/png;base64,{{ encodedImage }}"/>
     </div>
     
