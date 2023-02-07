@@ -4,13 +4,49 @@
 </p>
 
 
-##  Ejemplo 2 :
+##  Ejemplo 2: Gráfico de barras
+```py
+from flask import Flask, render_template
+import matplotlib.pyplot as plt
+import io
+import base64
+
+app = Flask(__name__)
+
+@app.route("/")
+def index():
+    # Generar gráfico de barras
+    labels = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio']
+    values = [10, 9, 8, 7, 6, 4]
+    fig = plt.figure()
+    plt.bar(labels, values)
+
+    # Convertir gráfico a imagen y codificar en Base64
+    img = io.BytesIO()
+    plt.savefig(img, format='png')
+    img.seek(0)
+    encodedImage = base64.b64encode(img.getvalue()).decode('utf-8')
+
+    return render_template('index.html', encodedImage=encodedImage)
+
+if __name__ == "__main__":
+    app.run(debug=True)
+```
+### Resultado
+<p aling="center">
+    <img src="2.png" alt="">
+</p>
+
+
+
+##  Ejemplo 3: Grafico de Barras con SQLITE3 
+### creacion y ejecuacion del archivo empleados.py
 ```py
 
 ```
 ### Resultado
 <p aling="center">
-    <img src="2.png" alt="">
+    <img src="3.png" alt="">
 </p>
 
 
