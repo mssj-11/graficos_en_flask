@@ -1,30 +1,37 @@
 from flask import Flask, render_template
+import sqlite3
 import matplotlib.pyplot as plt
 import io
 import base64
 
-
 app = Flask(__name__)
 
-@app.route("/")
+#   Función para convertir el gráfico en una imagen.
+def plot_to_img(plt):
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    buf.seek(0)
+    return base64.b64encode(buf.getvalue()).decode('utf-8')
+
+#   Ruta raíz y función que se ejecute cuando se acceda a la ruta.
+@app.route('/')
 def index():
-    # Crea un gráfico de barras con datos ficticios para la cantidad de empleados por departamento
-    departamentos = ['Ventas', 'Desarrollo', 'Marketing', 'Recursos Humanos']
-    empleados = [15, 20, 18, 17]
+    con = sqlite3.connect("empleados.db")
+    cur = con.cursor()
+    cur.execute("SELECT nombre, edad FROM empleados")
+    empleados = cur.fetchall()
 
-    fig, ax = plt.subplots()
-    ax.bar(departamentos, empleados)
-    ax.set_xlabel("Departamentos")
-    ax.set_ylabel("Número de empleados")
+    nombres = []
+    edades = []
 
-    # Convierte la figura a una imagen PNG
-    pngImage = io.BytesIO()
-    plt.savefig(pngImage, format='png')
-    pngImage.seek(0)
-    encodedImage = base64.b64encode(pngImage.getvalue()).decode('utf-8')
+    for empleado in empleados:
+        nombres.append(empleado[0])
+        edades.append(empleado[1])
+    
+    plt.bar(nombres, edades)
+    plot = plot_to_img(plt)
 
-    return render_template("index.html", encodedImage=encodedImage)
+    return render_template('index.html', plot=plot)
 
-
-if __name__ == "__main__":
-    app.run(debug=True)
+if __name__ == '__main__':
+    app.run()
